@@ -14,6 +14,20 @@ router.get('/', (req,res)=>{
 });
 
 
+//Get one movie
+router.get('/:title', (req,res)=>{
+  //find a movie based on parameters
+  Movies.findOne({title:req.params.title})
+  .then((title) =>{
+    if(title){
+      return res.status(200).json(title);
+    }
+    else{ res.status(200).json({message: 'Cannot find title'});}
+  })
+  .catch(err=>res.status(200).json({message: 'Server error', err}))
+});
+
+
 //Adds movies to database
 router.post('/addmovie',(req, res)=>{
   //Validate input
@@ -61,13 +75,13 @@ newMovie.save()
 })
 
 
-//Update a word
+//Update a movie
 router.put('/:title', (req, res) =>{
   //find a movie based on parameters
   Movies.findOne({title:req.params.title})
   .then((movie) =>{
       if(movie){
-          //redefine definition
+          //change movie info
           movie.rating = req.body.rating ? req.body.rating : movie.rating;
           movie.synopsis = req.body.synopsis ? req.body.synopsis : movie.synopsis;
           movie.releaseyear = req.body.releaseyear ? req.body.releaseyear : movie.releaseyear;
@@ -76,7 +90,7 @@ router.put('/:title', (req, res) =>{
           movie.boxoffice = req.body.boxoffice ? req.body.boxoffice : movie.boxoffice;
           movie.movieposter = req.body.movieposter ? req.body.movieposter : movie.movieposter;
 
-          //save new definition
+          //save new movie info
           movie
           .save()
           .then(updated =>{ 
@@ -92,7 +106,7 @@ router.put('/:title', (req, res) =>{
 });
 
 
-//delete a word
+//delete a movie
 router.delete('/:title', (req, res)=> {
   Movies.findOneAndDelete({title: req.params.title})
   .then((title) => {
